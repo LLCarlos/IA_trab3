@@ -1,0 +1,5 @@
+No seu Readme.md, coloque os valores iniciais de theta_0, theta_1, valores de alpha e
+num_iterations que resultem na melhor execução da sua regressão linear. Coloque também o
+erro quadrático médio obtido. Se sua implementação estiver boa, não se preocupe em encontrar
+bons theta_0e theta_1 iniciais. Você pode inicializá-los aleatoriamente que o algoritmo irá
+encontrar uma reta que faça um bom ajuste
