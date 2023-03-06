@@ -1,4 +1,6 @@
 import random
+import matplotlib.pyplot as plt
+
 random.seed()
 TAM_TABULEIRO = 8
 
@@ -12,7 +14,7 @@ def crossover(parent1,parent2, index):
 
 def mutate(individual,m,aggressive = False):
   if(m < 0.5 and aggressive):
-    m += 0.2
+    m += 0.5
 
   if(random.random() < m):
     index = random.randint(0,7)
@@ -72,10 +74,11 @@ def cria_populacao(qtd):
 
   return populacao
 
-def run_ga(g, n, k, m, e):
+def run_ga(g, n, k, m, e,debug = False):
     populacao = cria_populacao(n)
     best = 99
-    graph_data = ["Geracao | Best | Worst | Avg"]
+    worst = 0
+    graph_data = [[],[],[],[]]
 
     for gen in range(g):
       sum = 0
@@ -88,38 +91,44 @@ def run_ga(g, n, k, m, e):
       current_best = evaluate(elite[0])
       current_worst = evaluate(populacao[-1])   
       current_avg = sum/n
-      graph_data.append([gen,current_best,current_worst,current_avg])
+      graph_data[0].extend([gen])
+      graph_data[1].extend([current_best])
+      graph_data[2].extend([current_avg])
+      graph_data[3].extend([current_worst])
+
+      if(current_worst > worst):
+        worst = current_worst
       
 
       if(current_best < best):
         best = current_best
-        print(f"{best=} || {elite[0]}")
+        if(debug):
+          print(f"{best=} || {elite[0]}")
 
         if(current_best == 0):
-          print(f"Terminou em {gen=}")
+          if(debug):
+            print(f"Terminou em {gen=}")
           break
 
-      #print(f"{len(elite)} selecionados, {len(populacao)} restantes")
-
       resultado_torneio = []
-      while len(populacao) >= 2:
+
+      
+      while len(populacao) >= k:
         participantes_torneio = []
-        index1 = random.randint(0,len(populacao)-1)
-        participantes_torneio.append(populacao.pop(index1))
-        index2 = random.randint(0,len(populacao)-1)
-        participantes_torneio.append(populacao.pop(index2))
+        for i in range(k):
+          index = random.randint(0,len(populacao)-1)
+          participantes_torneio.append(populacao.pop(index))
 
         resultado_torneio.append ( tournament(participantes_torneio))
 
-
-      #print(f"{len(resultado_torneio)} selecionados por torneio")
-      resultado_torneio.sort(key=evaluate)
+      current_generation = resultado_torneio
       nova_geracao = []
-      pesos = [evaluated_weight(individuo) for individuo in resultado_torneio]
+      pesos = [evaluated_weight(individuo) for individuo in current_generation]
+
       
 
-      while (len(nova_geracao) < size_non_elite):
-        selected_parents = random.choices(resultado_torneio,weights = pesos,k=2)
+      while (len(nova_geracao) < n):
+        selected_parents = random.choices(current_generation,weights = pesos,k=2)
         filhos = crossover(selected_parents[0],selected_parents[1],4)
         individuo1 = mutate(filhos[0],m, current_best == 1)
         individuo2 = mutate(filhos[1],m, current_best == 1)
@@ -128,17 +137,17 @@ def run_ga(g, n, k, m, e):
       nova_geracao += elite  
       populacao = nova_geracao
 
-      #print(f"{len(nova_geracao)} individuos para a próxima iteração")
+    if(debug):
+      plt.figure(figsize=(16, 16))
+      plt.ylabel('Conflitos',fontsize = 16)
+      plt.xlabel('Gerações',fontsize = 16)
+      plt.plot(graph_data[0],graph_data[1],label='best')
+      plt.plot(graph_data[0],graph_data[2],label='avg')
+      plt.plot(graph_data[0],graph_data[3],label='worst')
+      plt.yticks(range(worst+1))
+      plt.grid();plt.legend();plt.show()
+    
+    return elite[0]
 
-      """
-      Executa o algoritmo genético e retorna o indivíduo com o menor número de ataques entre rainhas
-      :param g:int - numero de gerações
-      :param n:int - numero de individuos
-      :param k:int - numero de participantes do torneio
-      :param m:float - probabilidade de mutação (entre 0 e 1, inclusive)
-      :param e:int - número de indivíduos no elitismo
-      :return:list - melhor individuo encontrado
-      """
-
-
-run_ga(1400,200,3,0.02,6)
+if __name__ == '__main__':
+  print(run_ga(200,400,3,0.2,10,True))
