@@ -10,13 +10,13 @@ def compute_mse(theta_0, theta_1, data):
     :return: float - o erro quadratico medio
     """
 
-    mse = 0
-
+    mse = 0.0
+    size = len(data)
     for d in data:
         y_hat = theta_0 + (d[0] * theta_1)
         mse = mse + pow((d[1] - y_hat), 2)
 
-    mse = mse/len(data)
+    mse = mse/size
 
     return mse
 

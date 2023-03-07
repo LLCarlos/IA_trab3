@@ -17,8 +17,8 @@ solução ótima em menos de 20 gerações, mas como os piores casos não passam
 
 2. Algoritmo de gradiente descendente / descida de gradiente para regressão linear.
 
-No seu Readme.md, coloque os valores iniciais de theta_0, theta_1, valores de alpha e
-num_iterations que resultem na melhor execução da sua regressão linear. Coloque também o
-erro quadrático médio obtido. Se sua implementação estiver boa, não se preocupe em encontrar
-bons theta_0e theta_1 iniciais. Você pode inicializá-los aleatoriamente que o algoritmo irá
-encontrar uma reta que faça um bom ajuste
+- alpha: 0.001
+- theta_0: -1
+- theta_1: 1
+- num_iterations: 10000
+- MSE: 8.52854301222427
